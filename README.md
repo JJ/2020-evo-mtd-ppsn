@@ -1,2 +1,2 @@
 # 2020-evo-mtd-ppsn
-Mobile target defense paper for PPSN
+Moving target defense paper for PPSN
