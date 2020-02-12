@@ -1,0 +1,83 @@
+#!/usr/bin/env python3
+"""
+    This script calculate the fitnes of a configuration via this steps:
+     1. Generate a NGINX configuration file based on the given config
+     2. Test the configuration throught the `nginx -t` tool
+     3. Run NGINX with the generated configuration
+     4. Uses ZAP to know the security score of the configuration
+"""
+__author__ = "Ernesto Serrano"
+__license__ = "GPLv3"
+__email__ = "erseco@correo.ugr.es"
+
+import evomtd.zap
+import evomtd.config.nginx
+
+from subprocess import run, Popen, PIPE
+import tempfile
+import os
+import sys
+import time
+import tempfile
+
+import signal
+
+
+def check_kill_process(pstring):
+    for line in os.popen("ps ax | grep " + pstring + " | grep -v grep"):
+        fields = line.split()
+        pid = fields[0]
+        pid = pid.replace("root", "").replace("nginx", "").strip()
+
+        try:
+           os.kill(int(pid), signal.SIGKILL)
+        except Exception as e:
+            pass
+
+
+def calculate_fitness(config):
+
+    # Force kill running NGINX processes
+    # print("Stopping NGINX servicer...", file=sys.stderr)
+    # Popen(["service", "nginx", "stop"])
+    # time.sleep(1)
+    check_kill_process("nginx")
+    time.sleep(1)
+
+    nginx = generate(config)
+
+    filename = tempfile.mktemp(".conf")
+
+    with open(filename, 'w') as f:
+        f.write(str(nginx))
+
+    print("Configuration →", nginx )
+    check_kill_process("nginx")
+
+    p = run(['nginx', '-t', '-c', filename], stdout=PIPE)
+    # Print values (for debug purposes)
+    # print(p.returncode)
+    # print(p.stdout)
+
+    # By default return a high value
+    alerts = 999
+
+    if p.returncode == 0:
+        Popen(["nginx", "-c", filename], stdout=PIPE, encoding='ascii')
+
+        alerts = zap_test()
+
+        # Print alerts (for debug purposes)
+        # print("Alerts:")
+        # print(alerts)
+        check_kill_process("nginx")
+        time.sleep(1)
+        check_kill_process("nginx")
+        time.sleep(1)
+        check_kill_process("nginx")  # This is a lot of killing...
+
+        Popen(["service", "nginx", "zap"])
+        time.sleep(2)
+
+        # os.unlink(filename)
+    return alerts
