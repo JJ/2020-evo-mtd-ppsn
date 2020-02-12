@@ -1,5 +1,4 @@
 from evomtd.genetic import *
-from evomtd.fitness import *
 
 import mock
 import random

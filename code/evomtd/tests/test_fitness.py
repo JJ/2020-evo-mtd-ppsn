@@ -1,4 +1,3 @@
-from evomtd.fitness import *
 from evomtd.genetic import *
 from evomtd.config.nginx import *
 
