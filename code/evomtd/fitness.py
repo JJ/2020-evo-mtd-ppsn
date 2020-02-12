@@ -10,8 +10,8 @@ __author__ = "Ernesto Serrano"
 __license__ = "GPLv3"
 __email__ = "erseco@correo.ugr.es"
 
-import evomtd.zap
-import evomtd.config.nginx
+from evomtd.zap import *
+from evomtd.config.nginx import *
 
 from subprocess import run, Popen, PIPE
 import tempfile

@@ -1,6 +1,6 @@
-import evomtd.fitness
-import evomtd.genetic
-import evomtd.config.nginx
+from evomtd.fitness import *
+from evomtd.genetic import *
+from evomtd.config.nginx import *
 
 """Pytest TDD Test definition file"""
 __author__ = "Ernesto Serrano"
@@ -12,7 +12,7 @@ def test_generate_random_config_len():
     """Test generation of random config"""
     config = generate_random_config()
     assert(isinstance(config, list))
-    assert(len(config) == genetic.genes)
+    assert(len(config) == genes)
 
 def test_fitness():
     config = generate_random_config()

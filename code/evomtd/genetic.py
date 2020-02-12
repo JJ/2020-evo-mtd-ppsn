@@ -8,8 +8,8 @@ __license__ = "GPLv3"
 __email__ = "erseco@correo.ugr.es"
 
 
-import evomtd.fitness
-import evomtd.config.nginx
+from evomtd.fitness import calculate_fitness
+from evomtd.config.nginx import generate_random_config, mutate_config
 
 import random
 import click

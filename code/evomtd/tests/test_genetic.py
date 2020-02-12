@@ -1,5 +1,6 @@
 from evomtd.genetic import *
-import evomtd.fitness
+from evomtd.fitness import *
+
 import mock
 import random
 import pytest
@@ -15,7 +16,7 @@ def test_individual():
     """Test individual generation"""
     config = individual()
     assert(isinstance(config, list))
-    assert(len(config) == genetic.genes)
+    assert(len(config) == genes)
 
 
 def test_initialize():
@@ -24,7 +25,7 @@ def test_initialize():
     assert(len(population) == individuals)
 
 
-@mock.patch('fitness.calculate_fitness', return_value=random.randint(0,999))
+@mock.patch('evomtd.fitness.calculate_fitness', return_value=random.randint(0,999))
 def test_selection_and_reproduction(function):
     """Test selection and reproduction"""
     local_population = [(i[0], i) for i in population]
