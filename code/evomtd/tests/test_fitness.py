@@ -1,5 +1,4 @@
-from evomtd.genetic import *
-from evomtd.config.nginx import *
+from evomtd.config.nginx import generate_random_config
 
 import mock
 
