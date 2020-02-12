@@ -1,5 +1,8 @@
 from evomtd.config.nginx import generate_random_config
+from evomtd.fitness import calculate_fitness
+from evomtd.genetic import genes
 
+import random
 import mock
 
 """Pytest TDD Test definition file"""
