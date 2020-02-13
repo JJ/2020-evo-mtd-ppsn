@@ -24,8 +24,7 @@ def test_initialize():
     assert(len(population) == individuals)
 
 
-@mock.patch('evomtd.fitness.calculate_fitness', return_value=random.randint(0,999))
-def test_selection_and_reproduction(function):
+def test_selection_and_reproduction():
     """Test selection and reproduction"""
     local_population = [(i[0], i) for i in population]
 

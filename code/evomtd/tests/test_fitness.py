@@ -20,7 +20,7 @@ def test_generate_random_config_len():
 @mock.patch('evomtd.fitness.calculate_fitness',return_value=33)
 def test_fitness( function ):
     config = generate_random_config()
-    print(calculate_fitness(config))
-    this_fitness = calculate_fitness(config)
+    print(function(config))
+    this_fitness = function(config)
     assert(this_fitness)
     assert(this_fitness > 0)

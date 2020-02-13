@@ -51,7 +51,11 @@ def zap_spider():
 risk_score = { 'Informational' : 0, 'Low' : 1, 'Medium': 2, 'High': 4 }
 
 def zap_test():
-    zap_spider() # Needs to be done every time
+    try:
+        zap_spider() # Needs to be done every time
+    except:
+        return 999
+    
     print('Active Scanning target {}'.format(target), file=sys.stderr)
 
     print('Enable all scanners -> ' + zap.ascan.enable_all_scanners(), file=sys.stderr)
