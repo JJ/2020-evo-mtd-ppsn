@@ -17,9 +17,10 @@ def test_generate_random_config_len():
     assert(isinstance(config, list))
     assert(len(config) == genes)
 
-@mock.patch('evomtd.fitness.calculate_fitness')
+@mock.patch('evomtd.fitness.calculate_fitness',return_value=33)
 def test_fitness( function ):
     config = generate_random_config()
+    print(calculate_fitness(config))
     this_fitness = calculate_fitness(config)
     assert(this_fitness)
     assert(this_fitness > 0)
