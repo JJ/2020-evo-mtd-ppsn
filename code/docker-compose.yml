@@ -1,0 +1,34 @@
+# Orquestation two containers
+# 1. A container with Python & NGINX based on Alpine
+# 2. A container based on the official owasp/zap2docker-bare
+---
+version: '3.5'
+services:
+
+  juice-shop:
+    image: bkimminich/juice-shop
+
+  www.exampletfm.com:
+    build: .
+    depends_on:
+      - zap
+      - juice-shop
+    volumes:
+      # We link the local files to easily modify the running code for tests
+      - ./evomtd/zap.py:/tester/zap.py
+      - ./evomtd/fitness.py:/tester/fitness.py
+      - ./evomtd/generate_nginx_config.py:/tester/generate_nginx_config.py
+      - ./evomtd/genetic.py:/tester/genetic.py
+      - ./evomtd/docker.py:/tester/docker.py
+      - ./evomtd/run.sh:/tester/run.sh
+      - ./evomtd/results/:/tester/results/
+      - ./evomtd/cgroup/:/sys/fs/cgroup/:rw
+      - ./evomtd/site:/tester/site
+
+    # ports:
+    #   - "80:80"
+
+  zap:
+    image: owasp/zap2docker-bare
+    # image: owasp/zap2docker-weekly
+    command: zap.sh -daemon -port 8080 -host 0.0.0.0 -config api.disablekey=true -config api.addrs.addr.name=.* -config api.addrs.addr.regex=true
