@@ -19,6 +19,7 @@ RUN apk add --no-cache \
 RUN rc-update add nginx default
 RUN echo "auto lo" > /etc/network/interfaces
 RUN echo "iface lo inet loopback" >> /etc/network/interfaces
+RUN echo "fs.file-max = 4096" >> /etc/sysctl.conf
 
 # Installing python requirements
 RUN pip3 install -r requirements.txt
