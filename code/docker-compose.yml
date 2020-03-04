@@ -5,14 +5,10 @@
 version: '3.5'
 services:
 
-  juice-shop:
-    image: bkimminich/juice-shop
-
   www.exampletfm.com:
     build: .
     depends_on:
       - zap
-      - juice-shop
     volumes:
       # We link the local files to easily modify the running code for tests
       - ./evomtd/zap.py:/tester/zap.py
