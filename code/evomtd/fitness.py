@@ -10,7 +10,6 @@ __author__ = "Ernesto Serrano"
 __license__ = "GPLv3"
 __email__ = "erseco@correo.ugr.es"
 
-from evomtd.zap import *
 from evomtd.config.nginx import *
 
 from subprocess import run, Popen, PIPE
@@ -22,62 +21,49 @@ import tempfile
 
 import signal
 
+import os
+import sys
+import logging
+import copy
 
-def check_kill_process(pstring):
-    for line in os.popen("ps ax | grep " + pstring + " | grep -v grep"):
-        fields = line.split()
-        pid = fields[0]
-        pid = pid.replace("root", "").replace("nginx", "").strip()
+from gixy.core.manager import Manager as Gixy
+from gixy.formatters import get_all as formatters
 
-        try:
-           os.kill(int(pid), signal.SIGKILL)
-        except Exception as e:
-            pass
+
+from gixy.core.exceptions import InvalidConfiguration
+
+from io import StringIO
+
+formatter = formatters()["text"]()
 
 
 def calculate_fitness(config):
 
-    # Force kill running NGINX processes
-    # print("Stopping NGINX servicer...", file=sys.stderr)
-    # Popen(["service", "nginx", "stop"])
-    # time.sleep(1)
-    check_kill_process("nginx")
-    time.sleep(1)
-
     nginx = generate(config)
 
-    filename = tempfile.mktemp(".conf")
-
-    with open(filename, 'w') as f:
-        f.write(str(nginx))
-
-    print("Configuration →", nginx )
-    check_kill_process("nginx")
-
-    p = run(['nginx', '-t', '-c', filename], stdout=PIPE)
-    # Print values (for debug purposes)
-    # print(p.returncode)
-    # print(p.stdout)
-
     # By default return a high value
-    alerts = 999
+    score = 999
 
-    if p.returncode == 0:
-        Popen(["nginx", "-c", filename], stdout=PIPE, encoding='ascii')
+    s = StringIO(str(nginx))
 
-        alerts = zap_test()
+    # risk_score = { 'Informational' : 0, 'Low' : 1, 'Medium': 2, 'High': 4 }
+    # ValueError: ['UNSPECIFIED', 'LOW', 'MEDIUM', 'HIGH'] is not in list
 
-        # Print alerts (for debug purposes)
-        # print("Alerts:")
-        # print(alerts)
-        check_kill_process("nginx")
-        time.sleep(1)
-        check_kill_process("nginx")
-        time.sleep(1)
-        check_kill_process("nginx")  # This is a lot of killing...
+    # print(str(nginx))
 
-        Popen(["service", "nginx", "zap"])
-        time.sleep(2)
+    with Gixy() as yoda:
+        try:
 
-        # os.unlink(filename)
-    return alerts
+            yoda.audit('<stdin>', s, is_stdin=True)
+            score = sum(yoda.stats.values())
+            # score + risk_score[i['risk']]
+
+        except InvalidConfiguration:
+            score = 999
+
+        # Show the vulnerabilities
+        if sum(yoda.stats.values()) > 0:
+            formatter.feed(None, yoda)
+            print(formatter.flush())
+
+    return score

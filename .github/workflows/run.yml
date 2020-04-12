@@ -1,0 +1,25 @@
+name: Run
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        individuals: [16, 32, 64]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python 3.8
+      uses: actions/setup-python@v1
+      with:
+        python-version: 3.8
+    - name: Install dependencies
+      run: |
+        cd code
+        python -m pip install --upgrade pip
+        python -m pip install -r requirements.txt
+    - name: Run for ${{ matrix.individuals }} individuals
+      run: |
+        python3 -m evomtd.genetic.py --individuals ${{ matrix.individuals }}
