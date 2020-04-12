@@ -95,7 +95,7 @@ def generate(config=generate_random_config()):
 
     http = Section(
         'http',
-        include='/etc/nginx/mime.types',
+        # include='/etc/nginx/mime.types',
         default_type='application/octet-stream',
         access_log='/tmp/nginx-access.log',
         sendfile='on',
